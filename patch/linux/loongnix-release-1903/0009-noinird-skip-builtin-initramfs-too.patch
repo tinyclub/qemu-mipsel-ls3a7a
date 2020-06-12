@@ -1,0 +1,72 @@
+From 4163cc83b4f7693abecc77ce9b3845ce356372b8 Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <wuzhangjin@gmail.com>
+Date: Mon, 22 Jul 2019 21:37:56 +0800
+Subject: [PATCH] noinird: skip builtin initramfs too
+
+This allows to skip the builtin initramfs and use another rootfs instead.
+
+Signed-off-by: Wu Zhangjin <wuzhangjin@gmail.com>
+---
+ init/Makefile           |  3 ---
+ init/do_mounts_initrd.c |  2 +-
+ init/initramfs.c        | 13 ++++++++++++-
+ 3 files changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/init/Makefile b/init/Makefile
+index 7bc47ee..692b91f 100644
+--- a/init/Makefile
++++ b/init/Makefile
+@@ -3,11 +3,8 @@
+ #
+ 
+ obj-y                          := main.o version.o mounts.o
+-ifneq ($(CONFIG_BLK_DEV_INITRD),y)
+ obj-y                          += noinitramfs.o
+-else
+ obj-$(CONFIG_BLK_DEV_INITRD)   += initramfs.o
+-endif
+ obj-$(CONFIG_GENERIC_CALIBRATE_DELAY) += calibrate.o
+ 
+ ifneq ($(CONFIG_ARCH_INIT_TASK),y)
+diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
+index 3e0878e..5d97deb 100644
+--- a/init/do_mounts_initrd.c
++++ b/init/do_mounts_initrd.c
+@@ -23,7 +23,7 @@
+ unsigned long initrd_start, initrd_end;
+ int initrd_below_start_ok;
+ unsigned int real_root_dev;	/* do_proc_dointvec cannot handle kdev_t */
+-static int __initdata mount_initrd = 1;
++int __initdata mount_initrd = 1;
+ 
+ static int __init no_initrd(char *str)
+ {
+diff --git a/init/initramfs.c b/init/initramfs.c
+index d3e7301..f5259b3 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -579,9 +579,20 @@ static void __init clean_rootfs(void)
+ }
+ #endif
+ 
++extern int __initdata mount_initrd;
++
+ static int __init populate_rootfs(void)
+ {
+-	char *err = unpack_to_rootfs(__initramfs_start, __initramfs_size);
++	char *err;
++
++	if (!mount_initrd) {
++		printk(KERN_INFO "Skip builtin initramfs...\n");
++		free_initrd();
++		return 0;
++	}
++
++	err = unpack_to_rootfs(__initramfs_start, __initramfs_size);
++
+ 	if (err)
+ 		panic(err);	/* Failed to decompress INTERNAL initramfs */
+ 	if (initrd_start) {
+-- 
+1.9.1
+

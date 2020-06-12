@@ -1,0 +1,53 @@
+From 88a520495f88b04ec88f9bf444c3f9802148e66d Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <wuzhangjin@gmail.com>
+Date: Sat, 20 Jul 2019 00:13:46 -0700
+Subject: [PATCH 1/2] mips: zboot: add missing memcpy and memset
+
+Signed-off-by: Wu Zhangjin <wuzhangjin@gmail.com>
+---
+ arch/mips/boot/compressed/decompress.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/arch/mips/boot/compressed/decompress.c b/arch/mips/boot/compressed/decompress.c
+index 6bfd0be..0f927ae 100644
+--- a/arch/mips/boot/compressed/decompress.c
++++ b/arch/mips/boot/compressed/decompress.c
+@@ -43,8 +43,7 @@ void error(char *x)
+ /* activate the code for pre-boot environment */
+ #define STATIC static
+ 
+-#ifdef CONFIG_KERNEL_GZIP
+-void *memcpy(void *dest, const void *src, size_t n)
++void __weak *memcpy(void *dest, const void *src, size_t n)
+ {
+ 	int i;
+ 	const char *s = src;
+@@ -54,11 +53,8 @@ void *memcpy(void *dest, const void *src, size_t n)
+ 		d[i] = s[i];
+ 	return dest;
+ }
+-#include "../../../../lib/decompress_inflate.c"
+-#endif
+ 
+-#ifdef CONFIG_KERNEL_BZIP2
+-void *memset(void *s, int c, size_t n)
++void __weak *memset(void *s, int c, size_t n)
+ {
+ 	int i;
+ 	char *ss = s;
+@@ -67,6 +63,12 @@ void *memset(void *s, int c, size_t n)
+ 		ss[i] = c;
+ 	return s;
+ }
++
++#ifdef CONFIG_KERNEL_GZIP
++#include "../../../../lib/decompress_inflate.c"
++#endif
++
++#ifdef CONFIG_KERNEL_BZIP2
+ #include "../../../../lib/decompress_bunzip2.c"
+ #endif
+ 
+-- 
+2.7.4
+

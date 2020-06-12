@@ -1,0 +1,26 @@
+From 77a89fe94c3e3527199ff194f3ee3a21d037ae43 Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <falcon@tinylab.org>
+Date: Sat, 13 Jun 2020 02:32:55 +0800
+Subject: [PATCH 12/12] gcc-9: fix up stack detect errors
+
+Signed-off-by: Wu Zhangjin <falcon@tinylab.org>
+---
+ arch/mips/loongson/common/early_printk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/mips/loongson/common/early_printk.c b/arch/mips/loongson/common/early_printk.c
+index 3653be3..96372f9 100644
+--- a/arch/mips/loongson/common/early_printk.c
++++ b/arch/mips/loongson/common/early_printk.c
+@@ -58,7 +58,7 @@ void prom_printf(char *fmt, ...)
+ 	 *       (1024) Warn for stack frames larger than (needs gcc 4.4)
+ 	 * We avoid this build check error by forcing stack size under 1024.
+ 	 */
+-        char ppbuf[1024 - 16];
++        char ppbuf[1024 - 32];
+         char *bptr;
+ 
+         va_start(args, fmt);
+-- 
+2.7.4
+

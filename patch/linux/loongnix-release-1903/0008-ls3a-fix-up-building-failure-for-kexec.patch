@@ -1,0 +1,27 @@
+From 19f713593e35a794c08b7f626fd35540f31b8fb8 Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <wuzhangjin@gmail.com>
+Date: Mon, 22 Jul 2019 19:22:57 +0800
+Subject: [PATCH] ls3a: fix up building failure for !kexec
+
+Signed-off-by: Wu Zhangjin <wuzhangjin@gmail.com>
+---
+ arch/mips/loongson/common/env.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/mips/loongson/common/env.c b/arch/mips/loongson/common/env.c
+index b21b1b3..df0f118 100644
+--- a/arch/mips/loongson/common/env.c
++++ b/arch/mips/loongson/common/env.c
+@@ -133,7 +133,9 @@ void __init prom_init_env(void)
+ 	if (memsize == 0)
+ 		memsize = 256;
+ #else
++#ifdef CONFIG_KEXEC
+ 	int i;
++#endif
+ 
+ 	/* firmware arguments are initialized in head.S */
+ 	boot_p = (struct boot_params *)fw_arg2;
+-- 
+1.9.1
+

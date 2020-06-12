@@ -1,0 +1,29 @@
+From 6ca2290553b9de2df893b31402390da3fb9418f9 Mon Sep 17 00:00:00 2001
+From: Zhang Fuxin <fxzhang@ict.ac.cn>
+Date: Wed, 24 Apr 2019 18:07:48 +0800
+Subject: [PATCH 3/4] debugfs_create_file_unsafe is not defined. changed to
+ debugfs_create_file android sync_user option need this
+
+---
+ drivers/dma-buf/sync_debug.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/dma-buf/sync_debug.c b/drivers/dma-buf/sync_debug.c
+index 48b20e3..20160e3 100644
+--- a/drivers/dma-buf/sync_debug.c
++++ b/drivers/dma-buf/sync_debug.c
+@@ -201,9 +201,9 @@ static __init int sync_debugfs_init(void)
+ 	 * no need to protect it against removal races. The use of
+ 	 * debugfs_create_file_unsafe() is actually safe here.
+ 	 */
+-	debugfs_create_file_unsafe("info", 0444, dbgfs, NULL,
++	debugfs_create_file("info", 0444, dbgfs, NULL,
+ 				   &sync_info_debugfs_fops);
+-	debugfs_create_file_unsafe("sw_sync", 0644, dbgfs, NULL,
++	debugfs_create_file("sw_sync", 0644, dbgfs, NULL,
+ 				   &sw_sync_debugfs_fops);
+ 
+ 	return 0;
+-- 
+2.7.4
+

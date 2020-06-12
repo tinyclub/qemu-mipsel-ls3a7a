@@ -1,0 +1,26 @@
+From 9c155abbd57cdf97d5d1cdaa99af7eba4751e108 Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <falcon@tinylab.org>
+Date: Fri, 12 Jun 2020 04:54:01 +0800
+Subject: [PATCH] log2.h: fix up conflicts between const and noreturn
+
+Signed-off-by: Wu Zhangjin <falcon@tinylab.org>
+---
+ include/linux/log2.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/log2.h b/include/linux/log2.h
+index fd7ff3d..14458fd 100644
+--- a/include/linux/log2.h
++++ b/include/linux/log2.h
+@@ -18,7 +18,7 @@
+ /*
+  * deal with unrepresentable constant logarithms
+  */
+-extern __attribute__((const, noreturn))
++extern __attribute__((const))
+ int ____ilog2_NaN(void);
+ 
+ /*
+-- 
+2.7.4
+

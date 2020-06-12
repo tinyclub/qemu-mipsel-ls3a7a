@@ -1,0 +1,42 @@
+From f1219d01c775551c99eabd766da64f187bdda297 Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <wuzhangjin@gmail.com>
+Date: Mon, 22 Jul 2019 19:21:47 +0800
+Subject: [PATCH] ls3a: add zboot debug support
+
+Signed-off-by: Wu Zhangjin <wuzhangjin@gmail.com>
+---
+ arch/mips/boot/compressed/uart-16550.c | 4 ++++
+ arch/mips/loongson/Kconfig             | 1 +
+ 2 files changed, 5 insertions(+)
+
+diff --git a/arch/mips/boot/compressed/uart-16550.c b/arch/mips/boot/compressed/uart-16550.c
+index b8b8066..da69eac 100644
+--- a/arch/mips/boot/compressed/uart-16550.c
++++ b/arch/mips/boot/compressed/uart-16550.c
+@@ -9,7 +9,11 @@
+ #include <asm/addrspace.h>
+ 
+ #if defined(CONFIG_MACH_LOONGSON) || defined(CONFIG_MIPS_MALTA)
++#if defined(CONFIG_LOONGSON_MACH3X)
++#define UART_BASE 0x1fe001e0
++#else
+ #define UART_BASE 0x1fd003f8
++#endif
+ #define PORT(offset) (CKSEG1ADDR(UART_BASE) + (offset))
+ #endif
+ 
+diff --git a/arch/mips/loongson/Kconfig b/arch/mips/loongson/Kconfig
+index 2acbe26..008631b 100644
+--- a/arch/mips/loongson/Kconfig
++++ b/arch/mips/loongson/Kconfig
+@@ -90,6 +90,7 @@ config LOONGSON_MACH3X
+ 	select PHYS48_TO_HT40
+ 	select USE_OF
+ 	select BUILTIN_DTB
++	select SYS_SUPPORTS_ZBOOT_UART16550
+ 	help
+ 		Generic Loongson 3 family machines utilize the 3A/3B revision
+ 		of Loongson processor and RS780/SBX00 chipset.
+-- 
+1.9.1
+

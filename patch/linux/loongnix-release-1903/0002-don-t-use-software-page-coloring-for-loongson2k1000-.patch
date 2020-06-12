@@ -1,0 +1,30 @@
+From 29c53142c8623790309f58bf14183de1374d38b3 Mon Sep 17 00:00:00 2001
+From: Zhang Fuxin <fxzhang@ict.ac.cn>
+Date: Wed, 24 Apr 2019 17:25:58 +0800
+Subject: [PATCH 2/4] don't use software page coloring for
+ loongson2k1000(others to be added) Android need this to work with 4k page
+ size.
+
+---
+ arch/mips/mm/c-r4k.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/mips/mm/c-r4k.c b/arch/mips/mm/c-r4k.c
+index 6e68be4..fe31aaf 100644
+--- a/arch/mips/mm/c-r4k.c
++++ b/arch/mips/mm/c-r4k.c
+@@ -1603,6 +1603,11 @@ void  r4k_cache_init(void)
+ 	else
+ 		shm_align_mask = PAGE_SIZE-1;
+ 
++    /* loongson2k has hardware to handle page color */
++#ifdef CONFIG_CPU_LOONGSON2K
++	shm_align_mask = PAGE_SIZE - 1;
++#endif
++
+ 	__flush_cache_vmap	= r4k__flush_cache_vmap;
+ 	__flush_cache_vunmap	= r4k__flush_cache_vunmap;
+ 
+-- 
+2.7.4
+

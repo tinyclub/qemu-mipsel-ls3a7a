@@ -1,0 +1,60 @@
+From d45efc3629cdb471120690024264222e55a9f38a Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <wuzhangjin@gmail.com>
+Date: Sat, 20 Jul 2019 00:14:15 -0700
+Subject: [PATCH 2/2] ls2k: add zboot and zboot debug support
+
+Signed-off-by: Wu Zhangjin <wuzhangjin@gmail.com>
+---
+ arch/mips/Kconfig                      | 4 +++-
+ arch/mips/boot/compressed/Makefile     | 2 +-
+ arch/mips/boot/compressed/uart-16550.c | 6 ++++++
+ 3 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index d9cc419..1cd0385 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -295,7 +295,9 @@ config MACH_LOONGSON1
+ 
+ config MACH_LOONGSON2
+ 	bool "Loongson 64bit SoC"
+-    select SYS_SUPPORTS_ZBOOT
++	select SYS_HAS_EARLY_PRINTK
++	select SYS_SUPPORTS_ZBOOT
++	select SYS_SUPPORTS_ZBOOT_UART16550
+ 	help
+ 	  This enable the support for Loongson 2 SoC family of machines.
+ 
+diff --git a/arch/mips/boot/compressed/Makefile b/arch/mips/boot/compressed/Makefile
+index bbaa1d4..8984c4a 100644
+--- a/arch/mips/boot/compressed/Makefile
++++ b/arch/mips/boot/compressed/Makefile
+@@ -67,7 +67,7 @@ endif
+ 
+ vmlinuzobjs-y += $(obj)/piggy.o
+ 
+-quiet_cmd_zld = LD	$@
++quiet_cmd_zld = LD	  $@
+       cmd_zld = $(LD) $(LDFLAGS) -Ttext $(VMLINUZ_LOAD_ADDRESS) -T $< $(vmlinuzobjs-y) -o $@
+ quiet_cmd_strip = STRIP	  $@
+       cmd_strip = $(STRIP) -s $@
+diff --git a/arch/mips/boot/compressed/uart-16550.c b/arch/mips/boot/compressed/uart-16550.c
+index 1c7b739..b8b8066 100644
+--- a/arch/mips/boot/compressed/uart-16550.c
++++ b/arch/mips/boot/compressed/uart-16550.c
+@@ -13,6 +13,12 @@
+ #define PORT(offset) (CKSEG1ADDR(UART_BASE) + (offset))
+ #endif
+ 
++#if defined(CONFIG_MACH_LOONGSON2)
++#include <ls2k.h>
++#define UART_BASE LS2K_UART0_REG_BASE
++#define PORT(offset) (CKSEG1ADDR(UART_BASE) + (offset))
++#endif
++
+ #ifdef CONFIG_AR7
+ #include <ar7.h>
+ #define PORT(offset) (CKSEG1ADDR(AR7_REGS_UART0) + (4 * offset))
+-- 
+2.7.4
+
