@@ -1,0 +1,42 @@
+From b8d84497dfd0f10f769544cc5e083859621cff18 Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <falcon@tinylab.org>
+Date: Sat, 13 Jun 2020 05:02:05 +0800
+Subject: [PATCH] ls3a7a: fix up zboot uart support
+
+Signed-off-by: Wu Zhangjin <falcon@tinylab.org>
+---
+ arch/mips/Kconfig                      | 1 +
+ arch/mips/boot/compressed/uart-16550.c | 4 ++++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 690718b..5d5f65b 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -486,6 +486,7 @@ config MACH_LOONGSON64
+ 	select SYS_SUPPORTS_HIGHMEM
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
+ 	select SYS_SUPPORTS_ZBOOT
++	select SYS_SUPPORTS_ZBOOT_UART16550
+ 	select ZONE_DMA32
+ 	select NUMA
+ 	select COMMON_CLK
+diff --git a/arch/mips/boot/compressed/uart-16550.c b/arch/mips/boot/compressed/uart-16550.c
+index aee8d7b..b0cde78 100644
+--- a/arch/mips/boot/compressed/uart-16550.c
++++ b/arch/mips/boot/compressed/uart-16550.c
+@@ -9,7 +9,11 @@
+ #include <asm/addrspace.h>
+ 
+ #if defined(CONFIG_MACH_LOONGSON64) || defined(CONFIG_MIPS_MALTA)
++#if defined(CONFIG_MACH_LOONGSON64)
++#define UART_BASE 0x1fe001e0
++#else
+ #define UART_BASE 0x1fd003f8
++#endif
+ #define PORT(offset) (CKSEG1ADDR(UART_BASE) + (offset))
+ #endif
+ 
+-- 
+2.7.4
+
